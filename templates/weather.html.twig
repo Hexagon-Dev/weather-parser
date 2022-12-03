@@ -1,0 +1,34 @@
+<style>
+    table, tr, td {
+        border: 1px solid white;
+        border-collapse: collapse;
+    }
+    td {
+        padding: 6px;
+    }
+</style>
+{% for provider,weather in data %}
+    <h1 style="text-transform: capitalize">{{ provider }}</h1>
+    <table>
+        <tr>
+            <td>Day</td>
+        {% for key,day in weather %}
+                <td>{{ key + 1 }}</td>
+        {% endfor %}
+        </tr>
+        <tr>
+            <td>Min</td>
+        {% for day in weather %}
+                <td>{{ day.min }}</td>
+        {% endfor %}
+        </tr>
+        <tr>
+            <td>Max</td>
+        {% for day in weather %}
+                <td>{{ day.max }}</td>
+        {% endfor %}
+        </tr>
+    </table>
+{% else %}
+    No weather have been found.
+{% endfor %}
