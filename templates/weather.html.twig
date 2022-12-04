@@ -12,21 +12,27 @@
     <table>
         <tr>
             <td>Day</td>
-        {% for key,day in weather %}
-                <td>{{ key + 1 }}</td>
-        {% endfor %}
+            {% for key in weather %}
+                {% for day,temps in key %}
+                    <td>{{ day + 1 }}</td>
+                {% endfor %}
+            {% endfor %}
         </tr>
         <tr>
             <td>Min</td>
-        {% for day in weather %}
-                <td>{{ day.min }}</td>
-        {% endfor %}
+            {% for key in weather %}
+                {% for temps in key %}
+                    <td>{{ temps.min }}</td>
+                {% endfor %}
+            {% endfor %}
         </tr>
         <tr>
             <td>Max</td>
-        {% for day in weather %}
-                <td>{{ day.max }}</td>
-        {% endfor %}
+            {% for key in weather %}
+                {% for temps in key %}
+                    <td>{{ temps.max }}</td>
+                {% endfor %}
+            {% endfor %}
         </tr>
     </table>
 {% else %}

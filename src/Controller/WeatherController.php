@@ -23,6 +23,12 @@ class WeatherController extends AbstractController
         $weather['meteoProg'] = $this->parseMeteoProg();
         $weather['gismeteo'] = $this->parseGismeteo();
 
+        $callback = fn($key, $val): array => [date('d', strtotime(" +$key day")) => $val];
+
+        foreach ($weather as $key => $provider) {
+            $weather[$key] = array_map($callback, array_keys($provider), array_values($provider));
+        }
+
         return $this->render('weather.html.twig', [
             'data' => $weather,
         ]);
@@ -39,9 +45,8 @@ class WeatherController extends AbstractController
         $temperatures = [];
         $crawler->addHtmlContent(file_get_contents($url));
         for ($i = 1; $i <= 10; $i++) {
-            $key = intval($crawler->filter("#bd$i > .date")->text());
-            $temperatures[$key - 1]['min'] = intval($crawler->filter("#bd$i > .temperature > .min > span")->text());
-            $temperatures[$key - 1]['max'] = intval($crawler->filter("#bd$i > .temperature > .max > span")->text());
+            $temperatures[$i - 1]['min'] = intval($crawler->filter("#bd$i > .temperature > .min > span")->text());
+            $temperatures[$i - 1]['max'] = intval($crawler->filter("#bd$i > .temperature > .max > span")->text());
         }
 
         return $temperatures;
@@ -74,10 +79,10 @@ class WeatherController extends AbstractController
         $crawler->addHtmlContent(file_get_contents($url));
         $crawler->filter('.swiper-slide > .thumbnail-item__temperature')
             ->each(function (Crawler $node, $key) use (&$temperatures) {
-            $temps = explode(' ', $node->last()->text());
-            $temperatures[$key]['max'] = intval($temps[1]);
-            $temperatures[$key]['min'] = intval($temps[0]);
-        });
+                $temps = explode(' ', $node->last()->text());
+                $temperatures[$key]['max'] = intval($temps[1]);
+                $temperatures[$key]['min'] = intval($temps[0]);
+            });
 
         return array_slice($temperatures, 0, 10);
     }
